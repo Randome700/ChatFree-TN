@@ -609,3 +609,45 @@ button { font-family: inherit; cursor: pointer; }
   * { animation: none !important; transition: none !important; }
 }
 
+
+/* ---------------- 18+ confirmation checkbox ---------------- */
+.field--checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.field--checkbox input[type="checkbox"] {
+  margin-top: 3px;
+  flex-shrink: 0;
+  accent-color: var(--gold);
+  width: 16px;
+  height: 16px;
+}
+.field--checkbox span {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.field--checkbox a { color: var(--gold); }
+
+/* ---------------- Chat header actions (Report / Block) ---------------- */
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.chat-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.chat-action-btn {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  transition: all 0.15s;
+}
+.chat-action-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
+.chat-action-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.chat-action-btn--danger:hover:not(:disabled) { border-color: var(--danger); color: var(--danger); }

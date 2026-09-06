@@ -2,6 +2,8 @@
 // Anonymous 1-on-1 DM platform — backend
 // Node.js + Express + Socket.io, fully in-memory (no database required).
 
+const fs = require("fs");
+const path = require("path");
 const express = require("express");
 const http = require("http");
 const cors = require("cors");
@@ -19,6 +21,15 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+
+// --- Report logging --------------------------------------------------
+const LOG_FILE = path.join(__dirname, "reports.log");
+
+function logReport(entry) {
+  fs.appendFile(LOG_FILE, JSON.stringify(entry) + "\n", (err) => {
+    if (err) console.error("Failed to write report log:", err);
+  });
+}
 
 // --- In-memory state ----------------------------------------------------
 // activeUsers: { [socketId]: { socketId, age, sex, clientId } }
@@ -224,6 +235,25 @@ io.on("connection", (socket) => {
     io.to(peerSocketId).emit("seen_by", { socketId: socket.id, at: Date.now() });
   });
 
+  // --- report_user: log a reported conversation for safety/legal purposes ---
+  socket.on("report_user", ({ targetSocketId, conversation }) => {
+    const reporter = activeUsers[socket.id];
+    if (!reporter) return;
+
+    const entry = {
+      timestamp: new Date().toISOString(),
+      reporterSocketId: socket.id,
+      reporterIp: socket.handshake.address,
+      reportedSocketId: targetSocketId || null,
+      reportedIp: targetSocketId && activeUsers[targetSocketId]
+        ? io.sockets.sockets.get(targetSocketId)?.handshake.address
+        : null,
+      conversation: Array.isArray(conversation) ? conversation.slice(-200) : [],
+    };
+
+    logReport(entry);
+  });
+
   socket.on("disconnect", () => {
     removeUserEverywhere(socket.id);
     broadcastUserList();
@@ -234,3 +264,7 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Anon chat backend listening on port ${PORT}`);
 });
+
+
+
+

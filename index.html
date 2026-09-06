@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Anon — Private, Unnamed Conversation</title>
+<title>Anon â€” Private, Unnamed Conversation</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="style.css" />
@@ -35,11 +35,16 @@
           <span class="field-label">Sex</span>
           <div class="segmented" role="radiogroup" aria-label="Sex">
             <input type="radio" name="sex" id="sex-male" value="male" checked />
-            <label for="sex-male"><span class="seg-glyph">♂</span>Male</label>
+            <label for="sex-male"><span class="seg-glyph">â™‚</span>Male</label>
             <input type="radio" name="sex" id="sex-female" value="female" />
-            <label for="sex-female"><span class="seg-glyph">♀</span>Female</label>
+            <label for="sex-female"><span class="seg-glyph">â™€</span>Female</label>
           </div>
         </fieldset>
+
+        <label class="field field--checkbox">
+          <input type="checkbox" id="confirm-adult" required />
+          <span>I confirm I am 18 years of age or older and agree to the <a href="terms.html" target="_blank">Terms & Privacy Policy</a>.</span>
+        </label>
 
         <p id="entry-error" class="entry-error" hidden></p>
 
@@ -62,7 +67,7 @@
         <span class="pulse-dot"></span>
         <div>
           <div class="me-label">Connected as</div>
-          <div id="me-detail" class="me-detail">—</div>
+          <div id="me-detail" class="me-detail">â€”</div>
         </div>
       </div>
 
@@ -89,6 +94,10 @@
           <div id="chat-with" class="chat-with">Select someone to begin</div>
           <div id="chat-status" class="chat-status"></div>
         </div>
+        <div class="chat-actions">
+          <button id="block-btn" type="button" class="chat-action-btn" disabled>Block</button>
+          <button id="report-btn" type="button" class="chat-action-btn chat-action-btn--danger" disabled>Report</button>
+        </div>
       </header>
 
       <div id="chat-log" class="chat-log">
@@ -101,7 +110,7 @@
         <input
           type="text"
           id="message-input"
-          placeholder="Select a conversation to start typing…"
+          placeholder="Select a conversation to start typingâ€¦"
           maxlength="2000"
           disabled
           autocomplete="off"
@@ -117,5 +126,9 @@
 
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
   <script src="app.js"></script>
+<footer style="position:fixed;bottom:6px;left:0;right:0;text-align:center;font-size:11px;color:#4b5563;z-index:200;">&copy; 2026 Aziz dev &middot; <a href="terms.html" style="color:#4b5563;">Terms & Privacy</a></footer>
 </body>
 </html>
+
+
+

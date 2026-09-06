@@ -62,6 +62,8 @@ const limitBannerEl = document.getElementById("limit-banner");
 const messageForm = document.getElementById("message-form");
 const messageInput = document.getElementById("message-input");
 const sendBtn = document.getElementById("send-btn");
+const blockBtn = document.getElementById("block-btn");
+const reportBtn = document.getElementById("report-btn");
 
 // ---- Local state ----------------------------------------------------------
 let me = null;
@@ -70,6 +72,7 @@ let currentFilter = "all";
 let activeConversation = null;
 let conversationLogs = {}; // socketId -> [{ id, who, text, time, status }]
 let disconnectedPeers = new Set();
+let blockedPeers = new Set();
 let typingTimers = {}; // socketId -> timeout for "they stopped typing"
 let isTypingLocally = false;
 let typingDebounce = null;
@@ -104,6 +107,12 @@ window.addEventListener("DOMContentLoaded", () => {
 entryForm.addEventListener("submit", (e) => {
   e.preventDefault();
   entryError.hidden = true;
+
+  const confirmAdult = document.getElementById("confirm-adult");
+  if (!confirmAdult.checked) {
+    showEntryError("You must confirm you are 18 or older to continue.");
+    return;
+  }
 
   const saved = getSavedIdentity();
   const age = saved ? saved.age : Number(inputAge.value);
@@ -229,6 +238,10 @@ function selectUser(socketId) {
   sendBtn.disabled = false;
   messageInput.placeholder = "Type a message…";
 
+  blockBtn.disabled = false;
+  reportBtn.disabled = false;
+  updateBlockButton();
+
   renderUserList();
   renderChatLog();
   renderLimitBanner();
@@ -260,6 +273,7 @@ function sendMessage() {
   const text = messageInput.value.trim();
   if (!text || !activeConversation) return;
   if (disconnectedPeers.has(activeConversation)) return;
+  if (blockedPeers.has(activeConversation)) return;
 
   socket.emit("private_message", { targetSocketId: activeConversation, text });
   messageInput.value = "";
@@ -283,6 +297,7 @@ socket.on("private_message_sent", (payload) => {
 
 socket.on("private_message", (payload) => {
   const from = payload.fromSocketId;
+  if (blockedPeers.has(from)) return; // silently drop messages from blocked users
   if (!conversationLogs[from]) conversationLogs[from] = [];
 
   appendToLog(from, {
@@ -441,6 +456,43 @@ socket.on("disconnect", () => {
   sendBtn.disabled = true;
 });
 
+// ============================ BLOCK / REPORT ==============================
+function updateBlockButton() {
+  if (!activeConversation) return;
+  const isBlocked = blockedPeers.has(activeConversation);
+  blockBtn.textContent = isBlocked ? "Unblock" : "Block";
+  blockBtn.classList.toggle("chat-action-btn--danger", isBlocked);
+}
+
+blockBtn.addEventListener("click", () => {
+  if (!activeConversation) return;
+  if (blockedPeers.has(activeConversation)) {
+    blockedPeers.delete(activeConversation);
+  } else {
+    blockedPeers.add(activeConversation);
+    appendToLog(activeConversation, {
+      who: "system",
+      text: "You have blocked this user. You will no longer see messages from them.",
+      time: Date.now(),
+    });
+  }
+  updateBlockButton();
+});
+
+reportBtn.addEventListener("click", () => {
+  if (!activeConversation) return;
+  const log = conversationLogs[activeConversation] || [];
+  socket.emit("report_user", {
+    targetSocketId: activeConversation,
+    conversation: log.map((m) => ({ who: m.who, text: m.text, time: m.time })),
+  });
+  appendToLog(activeConversation, {
+    who: "system",
+    text: "Report sent. Thank you — our team will review this conversation.",
+    time: Date.now(),
+  });
+});
+
 // ============================ HELPERS =====================================
 function capitalize(s) {
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
@@ -450,4 +502,11 @@ function formatTime(ts) {
   const d = new Date(ts);
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
+
+
+
+
+
+
+
 
