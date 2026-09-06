@@ -1,5 +1,5 @@
-/* ==========================================================================
-   Anon — luxury dark design system
+﻿/* ==========================================================================
+   Anon â€” luxury dark design system
    Obsidian base, champagne-gold accent, glass surfaces, restrained motion.
    ========================================================================== */
 
@@ -280,6 +280,7 @@ button { font-family: inherit; cursor: pointer; }
   display: grid;
   grid-template-columns: 320px 1fr;
   height: 100vh;
+  height: 100dvh;
   opacity: 0;
 }
 .dashboard.is-entering { animation: dash-in 0.6s var(--ease-out) forwards; }
@@ -607,3 +608,4 @@ button { font-family: inherit; cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
 }
+
