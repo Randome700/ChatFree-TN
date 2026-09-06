@@ -3,7 +3,7 @@
 // typing indicators, read receipts, and the cold-message limit UI.
 
 // ⚠️ Point this at your deployed backend URL once you have one.
-const BACKEND_URL = "http://localhost:3000";
+const BACKEND_URL = "https://chatfree-tn.onrender.com";
 
 const socket = io(BACKEND_URL, { autoConnect: false });
 
@@ -450,3 +450,4 @@ function formatTime(ts) {
   const d = new Date(ts);
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
+
