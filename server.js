@@ -176,7 +176,8 @@ io.on("connection", (socket) => {
 
     let country = null;
     try {
-      const ip = socket.handshake.address;
+      const forwarded = socket.handshake.headers["x-forwarded-for"];
+      const ip = forwarded ? forwarded.split(",")[0].trim() : socket.handshake.address;
       const geo = geoip.lookup(ip);
       if (geo && geo.country) country = geo.country; // e.g. "TN", "US"
     } catch (e) {
@@ -275,6 +276,7 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Anon chat backend listening on port ${PORT}`);
 });
+
 
 
 
