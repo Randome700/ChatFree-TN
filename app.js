@@ -1,4 +1,4 @@
-﻿// app.js — Anon client logic
+﻿// app.js — 7kaya client logic
 // Handles the intro sequence, entry flow, socket.io connections, filtering,
 // typing indicators, read receipts, and the cold-message limit UI.
 
@@ -36,6 +36,21 @@ function saveIdentity(age, sex) {
 
 const CLIENT_ID = getClientId();
 
+// ---- Mobile keyboard fix ---------------------------------------------
+// Some mobile browsers do not resize 100dvh correctly when the on-screen
+// keyboard opens. We track the real visible height via visualViewport and
+// apply it directly so the message input never gets hidden behind the keyboard.
+function applyVisualViewportHeight() {
+  const vh = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+  document.documentElement.style.setProperty("--app-height", `${vh}px`);
+}
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", applyVisualViewportHeight);
+  window.visualViewport.addEventListener("scroll", applyVisualViewportHeight);
+}
+window.addEventListener("resize", applyVisualViewportHeight);
+applyVisualViewportHeight();
+
 // ---- DOM refs ------------------------------------------------------------
 const introOverlay = document.getElementById("intro-overlay");
 
@@ -47,6 +62,7 @@ const btnLabel = entrySubmit.querySelector(".btn-label");
 const btnSpinner = entrySubmit.querySelector(".btn-spinner");
 const entryError = document.getElementById("entry-error");
 const inputAge = document.getElementById("input-age");
+const connectingOverlay = document.getElementById("connecting-overlay");
 
 const dashboard = document.getElementById("dashboard");
 const meDetail = document.getElementById("me-detail");
@@ -134,6 +150,7 @@ function setConnecting(isConnecting) {
   entrySubmit.disabled = isConnecting;
   btnLabel.textContent = isConnecting ? "Connecting" : "Connect";
   btnSpinner.hidden = !isConnecting;
+  connectingOverlay.hidden = !isConnecting;
 }
 
 function showEntryError(msg) {
@@ -148,7 +165,7 @@ socket.on("join_error", ({ message }) => {
 
 socket.on("joined", (payload) => {
   me = payload;
-  meDetail.textContent = `${capitalize(me.sex)}, ${me.age}`;
+  meDetail.textContent = `${countryFlag(me.country)} ${capitalize(me.sex)}, ${me.age}`.trim();
 
   // Lock this browser to whatever the server confirmed (may differ from
   // the form if this browser had already joined before).
@@ -211,7 +228,7 @@ function renderUserList() {
     li.innerHTML = `
       <span class="uc-avatar">${initials(u.sex)}</span>
       <div>
-        <div class="uc-detail">${capitalize(u.sex)}, ${u.age} y/o</div>
+        <div class="uc-detail">${countryFlag(u.country)} ${capitalize(u.sex)}, ${u.age} y/o</div>
         <div class="uc-tag">#${u.socketId.slice(0, 6)}</div>
       </div>
     `;
@@ -228,7 +245,7 @@ function selectUser(socketId) {
 
   const user = onlineUsers.find((u) => u.socketId === socketId);
   chatWithEl.textContent = user
-    ? `Chatting with ${capitalize(user.sex)}, ${user.age}`
+    ? `Chatting with ${countryFlag(user.country)} ${capitalize(user.sex)}, ${user.age}`.trim()
     : "This user has left";
 
   chatStatusEl.textContent = "";
@@ -494,6 +511,13 @@ reportBtn.addEventListener("click", () => {
 });
 
 // ============================ HELPERS =====================================
+function countryFlag(code) {
+  if (!code || code.length !== 2) return "";
+  const A = 0x1F1E6;
+  const chars = code.toUpperCase().split("").map((c) => A + (c.charCodeAt(0) - 65));
+  return String.fromCodePoint(...chars);
+}
+
 function capitalize(s) {
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 }
@@ -502,6 +526,13 @@ function formatTime(ts) {
   const d = new Date(ts);
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
+
+
+
+
+
+
+
 
 
 

@@ -281,6 +281,7 @@ button { font-family: inherit; cursor: pointer; }
   grid-template-columns: 320px 1fr;
   height: 100vh;
   height: 100dvh;
+  height: var(--app-height, 100dvh);
   opacity: 0;
 }
 .dashboard.is-entering { animation: dash-in 0.6s var(--ease-out) forwards; }
@@ -651,3 +652,57 @@ button { font-family: inherit; cursor: pointer; }
 .chat-action-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
 .chat-action-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .chat-action-btn--danger:hover:not(:disabled) { border-color: var(--danger); color: var(--danger); }
+
+
+/* ============================ CONNECTING OVERLAY (3D cube) ============================ */
+.connecting-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  background: var(--bg-base);
+}
+.connecting-overlay[hidden] { display: none; }
+
+.cube-scene {
+  width: 80px;
+  height: 80px;
+  perspective: 400px;
+}
+.cube {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: cube-spin 2.4s infinite linear;
+}
+.cube-face {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border: 1px solid var(--gold);
+  background: var(--gold-soft);
+  box-shadow: 0 0 18px var(--gold-glow) inset;
+}
+.cube-face.front  { transform: translateZ(40px); }
+.cube-face.back   { transform: translateZ(-40px) rotateY(180deg); }
+.cube-face.right  { transform: rotateY(90deg) translateZ(40px); }
+.cube-face.left   { transform: rotateY(-90deg) translateZ(40px); }
+.cube-face.top    { transform: rotateX(90deg) translateZ(40px); }
+.cube-face.bottom { transform: rotateX(-90deg) translateZ(40px); }
+
+@keyframes cube-spin {
+  from { transform: rotateX(0deg) rotateY(0deg); }
+  to   { transform: rotateX(360deg) rotateY(360deg); }
+}
+
+.connecting-text {
+  color: var(--gold);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

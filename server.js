@@ -2,6 +2,7 @@
 // Anonymous 1-on-1 DM platform — backend
 // Node.js + Express + Socket.io, fully in-memory (no database required).
 
+const geoip = require("geoip-lite");
 const fs = require("fs");
 const path = require("path");
 const express = require("express");
@@ -130,6 +131,7 @@ function publicUserList() {
     socketId: u.socketId,
     age: u.age,
     sex: u.sex,
+    country: u.country,
   }));
 }
 
@@ -172,10 +174,19 @@ io.on("connection", (socket) => {
       persistentIdentities[clientId] = { age, sex };
     }
 
-    activeUsers[socket.id] = { socketId: socket.id, age, sex, clientId };
+    let country = null;
+    try {
+      const ip = socket.handshake.address;
+      const geo = geoip.lookup(ip);
+      if (geo && geo.country) country = geo.country; // e.g. "TN", "US"
+    } catch (e) {
+      country = null;
+    }
+
+    activeUsers[socket.id] = { socketId: socket.id, age, sex, clientId, country };
     clientIdBySocket[socket.id] = clientId;
 
-    socket.emit("joined", { socketId: socket.id, age, sex });
+    socket.emit("joined", { socketId: socket.id, age, sex, country });
     broadcastUserList();
   });
 
@@ -264,6 +275,9 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Anon chat backend listening on port ${PORT}`);
 });
+
+
+
 
 
 

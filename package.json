@@ -12,6 +12,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.19.2",
+    "geoip-lite": "^2.0.3",
     "socket.io": "^4.7.5"
   }
 }
