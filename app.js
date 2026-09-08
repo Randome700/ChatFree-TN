@@ -165,6 +165,7 @@ socket.on("join_error", ({ message }) => {
 
 socket.on("joined", (payload) => {
   me = payload;
+  connectingOverlay.hidden = true;
   meDetail.textContent = `${countryFlag(me.country)} ${capitalize(me.sex)}, ${me.age}`.trim();
 
   // Lock this browser to whatever the server confirmed (may differ from
@@ -526,6 +527,7 @@ function formatTime(ts) {
   const d = new Date(ts);
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
+
 
 
 
