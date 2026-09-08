@@ -706,3 +706,13 @@ button { font-family: inherit; cursor: pointer; }
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
+
+/* ---------------- Country flag icons ---------------- */
+.flag-icon {
+  width: 18px;
+  height: 13px;
+  border-radius: 2px;
+  vertical-align: middle;
+  margin-right: 2px;
+  box-shadow: 0 0 0 1px var(--border-subtle);
+}

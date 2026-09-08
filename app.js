@@ -166,7 +166,7 @@ socket.on("join_error", ({ message }) => {
 socket.on("joined", (payload) => {
   me = payload;
   connectingOverlay.hidden = true;
-  meDetail.textContent = `${countryFlag(me.country)} ${capitalize(me.sex)}, ${me.age}`.trim();
+  meDetail.innerHTML = `${countryFlag(me.country)} ${capitalize(me.sex)}, ${me.age}`;
 
   // Lock this browser to whatever the server confirmed (may differ from
   // the form if this browser had already joined before).
@@ -245,8 +245,8 @@ function selectUser(socketId) {
   if (!conversationLogs[socketId]) conversationLogs[socketId] = [];
 
   const user = onlineUsers.find((u) => u.socketId === socketId);
-  chatWithEl.textContent = user
-    ? `Chatting with ${countryFlag(user.country)} ${capitalize(user.sex)}, ${user.age}`.trim()
+  chatWithEl.innerHTML = user
+    ? `Chatting with ${countryFlag(user.country)} ${capitalize(user.sex)}, ${user.age}`
     : "This user has left";
 
   chatStatusEl.textContent = "";
@@ -514,9 +514,8 @@ reportBtn.addEventListener("click", () => {
 // ============================ HELPERS =====================================
 function countryFlag(code) {
   if (!code || code.length !== 2) return "";
-  const A = 0x1F1E6;
-  const chars = code.toUpperCase().split("").map((c) => A + (c.charCodeAt(0) - 65));
-  return String.fromCodePoint(...chars);
+  const lower = code.toLowerCase();
+  return `<img class="flag-icon" src="https://flagcdn.com/24x18/${lower}.png" alt="${code}" />`;
 }
 
 function capitalize(s) {
@@ -527,6 +526,8 @@ function formatTime(ts) {
   const d = new Date(ts);
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
+
+
 
 
 
