@@ -4,15 +4,23 @@
    ========================================================================== */
 
 :root {
-  --bg-base: #0d0f12;
-  --bg-elevated: #181c24;
-  --bg-elevated-2: #1c222d;
+  --bg-base: #0a0b14;
+  --bg-elevated: #14162280;
+  --bg-elevated-2: #191c2c;
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-soft: rgba(255, 255, 255, 0.05);
 
-  --gold: #d4af37;
-  --gold-soft: rgba(212, 175, 55, 0.14);
-  --gold-glow: rgba(212, 175, 55, 0.35);
+  --gold: #38e0d8;
+  --gold-soft: rgba(56, 224, 216, 0.14);
+  --gold-glow: rgba(56, 224, 216, 0.35);
+
+  --accent-teal: #38e0d8;
+  --accent-teal-soft: rgba(56, 224, 216, 0.16);
+  --accent-violet: #b98cf0;
+  --accent-violet-soft: rgba(185, 140, 240, 0.16);
+  --accent-coral: #ff9166;
+  --accent-neutral: #c9ccd6;
+  --accent-neutral-soft: rgba(201, 204, 214, 0.14);
 
   --text-primary: #f3f4f6;
   --text-secondary: #9ca3af;
@@ -37,8 +45,9 @@ body {
   margin: 0;
   background: var(--bg-base);
   background-image:
-    radial-gradient(circle at 20% -10%, rgba(212, 175, 55, 0.06), transparent 45%),
-    radial-gradient(circle at 85% 110%, rgba(212, 175, 55, 0.04), transparent 40%);
+    radial-gradient(circle at 15% -10%, rgba(185, 140, 240, 0.10), transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(56, 224, 216, 0.08), transparent 40%),
+    radial-gradient(circle at 50% 110%, rgba(255, 145, 102, 0.05), transparent 45%);
   color: var(--text-primary);
   font-family: var(--font-body);
   min-height: 100vh;
@@ -295,6 +304,7 @@ button { font-family: inherit; cursor: pointer; }
 .sidebar {
   background: var(--bg-elevated);
   border-right: 1px solid var(--border-subtle);
+  backdrop-filter: blur(20px);
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -402,22 +412,73 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 .uc-avatar {
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: var(--bg-base);
-  border: 1px solid var(--border-subtle);
+  border: 2px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
   font-weight: 700;
-  color: var(--gold);
+  color: var(--text-primary);
+  flex-shrink: 0;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.uc-avatar.accent-teal { border-color: var(--accent-teal); box-shadow: 0 0 10px var(--accent-teal-soft); color: var(--accent-teal); }
+.uc-avatar.accent-violet { border-color: var(--accent-violet); box-shadow: 0 0 10px var(--accent-violet-soft); color: var(--accent-violet); }
+.uc-avatar.accent-neutral { border-color: var(--accent-neutral); box-shadow: 0 0 8px var(--accent-neutral-soft); color: var(--accent-neutral); }
+
+.uc-body { flex: 1; min-width: 0; }
+.uc-top-row, .uc-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.uc-name {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.uc-time {
+  font-size: 10.5px;
+  color: var(--text-muted);
   flex-shrink: 0;
 }
-
-.user-card .uc-detail { font-size: 14px; font-weight: 500; }
-.user-card .uc-tag { font-size: 10.5px; color: var(--text-muted); }
+.uc-preview {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+.unread-badge {
+  flex-shrink: 0;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--accent-teal);
+  color: #0a0b14;
+  font-size: 10.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 0 var(--accent-teal-soft);
+  animation: badge-pulse 1.8s infinite;
+}
+@keyframes badge-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(56, 224, 216, 0.5); }
+  70% { box-shadow: 0 0 0 6px rgba(56, 224, 216, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(56, 224, 216, 0); }
+}
 
 .empty-state {
   text-align: center;
@@ -431,6 +492,8 @@ button { font-family: inherit; cursor: pointer; }
 .chat-panel {
   display: flex;
   flex-direction: column;
+  background: rgba(20, 22, 34, 0.5);
+  backdrop-filter: blur(20px);
   min-height: 0;
   opacity: 0;
   transform: translateY(8px);
@@ -716,3 +779,7 @@ button { font-family: inherit; cursor: pointer; }
   margin-right: 2px;
   box-shadow: 0 0 0 1px var(--border-subtle);
 }
+
+
+
+

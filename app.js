@@ -93,6 +93,8 @@ let typingTimers = {}; // socketId -> timeout for "they stopped typing"
 let isTypingLocally = false;
 let typingDebounce = null;
 let remainingBySocket = {}; // socketId -> remaining cold messages (null = unlimited)
+let unreadCounts = {}; // socketId -> number of unread messages
+let lastMessagePreview = {}; // socketId -> { text, time }
 
 // ============================ INTRO SEQUENCE ==============================
 window.addEventListener("DOMContentLoaded", () => {
@@ -208,6 +210,12 @@ function initials(sex) {
   return sex === "male" ? "M" : "F";
 }
 
+function accentClass(sex) {
+  if (sex === "male") return "accent-teal";
+  if (sex === "female") return "accent-violet";
+  return "accent-neutral";
+}
+
 function renderUserList() {
   const filtered = onlineUsers.filter((u) =>
     currentFilter === "all" ? true : u.sex === currentFilter
@@ -226,11 +234,23 @@ function renderUserList() {
     const li = document.createElement("li");
     li.className = "user-card";
     if (u.socketId === activeConversation) li.classList.add("is-selected");
+
+    const unread = unreadCounts[u.socketId] || 0;
+    const preview = lastMessagePreview[u.socketId];
+    const previewText = preview ? preview.text : "Say hello";
+    const previewTime = preview ? formatTime(preview.time) : "";
+
     li.innerHTML = `
-      <span class="uc-avatar">${initials(u.sex)}</span>
-      <div>
-        <div class="uc-detail">${countryFlag(u.country)} ${capitalize(u.sex)}, ${u.age} y/o</div>
-        <div class="uc-tag">#${u.socketId.slice(0, 6)}</div>
+      <span class="uc-avatar ${accentClass(u.sex)}">${initials(u.sex)}</span>
+      <div class="uc-body">
+        <div class="uc-top-row">
+          <span class="uc-name">${countryFlag(u.country)} ${capitalize(u.sex)}, ${u.age}</span>
+          <span class="uc-time">${previewTime}</span>
+        </div>
+        <div class="uc-bottom-row">
+          <span class="uc-preview">${previewText}</span>
+          ${unread > 0 ? `<span class="unread-badge">${unread}</span>` : ""}
+        </div>
       </div>
     `;
     li.addEventListener("click", () => selectUser(u.socketId));
@@ -242,6 +262,7 @@ function renderUserList() {
 function selectUser(socketId) {
   activeConversation = socketId;
   disconnectedPeers.delete(socketId);
+  unreadCounts[socketId] = 0;
   if (!conversationLogs[socketId]) conversationLogs[socketId] = [];
 
   const user = onlineUsers.find((u) => u.socketId === socketId);
@@ -328,12 +349,14 @@ socket.on("private_message", (payload) => {
 
   // Receiving a message from someone unlocks unlimited sending to them.
   remainingBySocket[from] = null;
+  lastMessagePreview[from] = { text: payload.text, time: payload.timestamp };
 
-  if (activeConversation !== from) {
-    selectUser(from);
-  } else {
+  if (activeConversation === from) {
     socket.emit("mark_seen", { peerSocketId: from });
+  } else {
+    unreadCounts[from] = (unreadCounts[from] || 0) + 1;
   }
+  renderUserList();
 });
 
 socket.on("message_error", ({ message }) => {
@@ -526,6 +549,9 @@ function formatTime(ts) {
   const d = new Date(ts);
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
+
+
+
 
 
 
