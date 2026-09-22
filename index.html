@@ -105,6 +105,7 @@
     <!-- ---------- Right: DM window ---------- -->
     <main class="chat-panel">
       <header class="chat-header">
+        <button id="back-btn" type="button" class="back-btn" aria-label="Back to discovery">←</button>
         <div>
           <div id="chat-with" class="chat-with">Select someone to begin</div>
           <div id="chat-status" class="chat-status"></div>
@@ -112,6 +113,14 @@
         <div class="chat-actions">
           <button id="block-btn" type="button" class="chat-action-btn" disabled>Block</button>
           <button id="report-btn" type="button" class="chat-action-btn chat-action-btn--danger" disabled>Report</button>
+        </div>
+        <div class="kebab-wrap">
+          <button id="kebab-btn" type="button" class="kebab-btn" aria-label="More options">⋮</button>
+          <div id="kebab-menu" class="kebab-menu" hidden>
+            <button id="kebab-report" type="button">Report</button>
+            <button id="kebab-block" type="button">Block</button>
+            <button id="kebab-leave" type="button">Leave conversation</button>
+          </div>
         </div>
       </header>
 
@@ -144,6 +153,8 @@
 <footer style="position:fixed;bottom:6px;left:0;right:0;text-align:center;font-size:11px;color:#4b5563;z-index:200;">&copy; 2026 Aziz dev &middot; <a href="terms.html" style="color:#4b5563;">Terms & Privacy</a></footer>
 </body>
 </html>
+
+
 
 
 

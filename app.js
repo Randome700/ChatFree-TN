@@ -80,6 +80,12 @@ const messageInput = document.getElementById("message-input");
 const sendBtn = document.getElementById("send-btn");
 const blockBtn = document.getElementById("block-btn");
 const reportBtn = document.getElementById("report-btn");
+const backBtn = document.getElementById("back-btn");
+const kebabBtn = document.getElementById("kebab-btn");
+const kebabMenu = document.getElementById("kebab-menu");
+const kebabReport = document.getElementById("kebab-report");
+const kebabBlock = document.getElementById("kebab-block");
+const kebabLeave = document.getElementById("kebab-leave");
 
 // ---- Local state ----------------------------------------------------------
 let me = null;
@@ -263,6 +269,7 @@ function selectUser(socketId) {
   activeConversation = socketId;
   disconnectedPeers.delete(socketId);
   unreadCounts[socketId] = 0;
+  dashboard.classList.add("is-chatting");
   if (!conversationLogs[socketId]) conversationLogs[socketId] = [];
 
   const user = onlineUsers.find((u) => u.socketId === socketId);
@@ -534,6 +541,37 @@ reportBtn.addEventListener("click", () => {
   });
 });
 
+// ============================ MOBILE FULLSCREEN NAV =======================
+function leaveConversation() {
+  dashboard.classList.remove("is-chatting");
+  activeConversation = null;
+  kebabMenu.hidden = true;
+  renderUserList();
+}
+
+backBtn.addEventListener("click", leaveConversation);
+kebabLeave.addEventListener("click", leaveConversation);
+
+kebabBtn.addEventListener("click", () => {
+  kebabMenu.hidden = !kebabMenu.hidden;
+});
+
+document.addEventListener("click", (e) => {
+  if (!kebabMenu.hidden && !e.target.closest(".kebab-wrap")) {
+    kebabMenu.hidden = true;
+  }
+});
+
+kebabReport.addEventListener("click", () => {
+  kebabMenu.hidden = true;
+  reportBtn.click();
+});
+
+kebabBlock.addEventListener("click", () => {
+  kebabMenu.hidden = true;
+  blockBtn.click();
+});
+
 // ============================ HELPERS =====================================
 function countryFlag(code) {
   if (!code || code.length !== 2) return "";
@@ -549,6 +587,9 @@ function formatTime(ts) {
   const d = new Date(ts);
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
+
+
+
 
 
 

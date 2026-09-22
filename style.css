@@ -741,7 +741,7 @@ button { font-family: inherit; cursor: pointer; }
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
-  animation: cube-spin 2.4s infinite linear;
+  animation: cube-spin 1.1s infinite linear;
 }
 .cube-face {
   position: absolute;
@@ -782,4 +782,69 @@ button { font-family: inherit; cursor: pointer; }
 
 
 
+
+
+/* ============================ MOBILE CONVERSATION VIEW ============================ */
+.back-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 20px;
+  padding: 4px 10px 4px 0;
+  flex-shrink: 0;
+}
+
+.kebab-wrap { position: relative; flex-shrink: 0; }
+.kebab-btn {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  width: 34px;
+  height: 34px;
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+.kebab-menu {
+  position: absolute;
+  top: 42px;
+  right: 0;
+  background: rgba(20, 22, 34, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+  overflow: hidden;
+  min-width: 170px;
+  z-index: 20;
+}
+.kebab-menu[hidden] { display: none; }
+.kebab-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 11px 16px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 13.5px;
+}
+.kebab-menu button:hover { background: var(--bg-elevated-2); }
+.kebab-menu #kebab-report:hover { color: var(--danger); }
+
+@media (max-width: 780px) {
+  .back-btn, .kebab-btn { display: flex; align-items: center; justify-content: center; }
+  .chat-actions { display: none; }
+
+  .dashboard { position: relative; }
+  .dashboard:not(.is-chatting) .chat-panel { display: none; }
+  .dashboard.is-chatting .sidebar { display: none; }
+  .dashboard.is-chatting .chat-panel {
+    position: fixed;
+    inset: 0;
+    height: var(--app-height, 100dvh);
+    z-index: 60;
+  }
+}
 
